@@ -1,0 +1,22 @@
+{
+  "name": "cs418-mongo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mercerccw/cs418-mongo.git"
+  },
+  "author": "Clayton Mercer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mercerccw/cs418-mongo/issues"
+  },
+  "homepage": "https://github.com/mercerccw/cs418-mongo#readme",
+  "dependencies": {
+    "mongodb": "^3.2.3"
+  }
+}
