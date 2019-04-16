@@ -6,28 +6,40 @@ const url = 'mongodb://localhost:27017';
 
 function query1(db, res ){
 	/* Find the name of the vessel with IMO 9306122, as a plain string. */
+	db.collection('vessels').findOne({ IMO: 9306122 }, { _id: 0, Name: 1 }, function( err, ship ){
+		if(err) console.log(err);
+		else {
+			res.writeHead(200, { 'content-type': 'text/plain' });
+			res.end(ship.Name);
+		}
+	});
 	
-	res.writeHead(200, {'content-type': 'text/plain'});
-	res.end('Nothing');
 
 }
 	
 
 function query2(db, res ){
 	/* Return the number of vessels in the collection, as a plain string. */
-
-	res.writeHead(200, {'content-type': 'text/plain'});
-	res.end('Nothing');
+	db.collection('vessels').countDocuments( function (err, count) {
+		if (err) console.log(err);
+		else {
+			res.writeHead(200, { 'content-type': 'text/plain' });
+			res.end(count.toString());
+		}
+	});
 
 }
 
 function query3(db, res){
 
 	/* Return all vessels sailing under Japanese flag, with tonnage >= 150,000, as a JSON array of documents */
-
-	res.writeHead(200, {'content-type': 'text/plain'});
-	res.end('[]');
-
+	db.collection('vessels').find({ Flag: "Japan", Tonnage: { $gte: 150000 } }).toArray( function( err, shipDocs ){
+		if (err) console.log(err);
+		else {
+			res.writeHead(200, { 'content-type': 'text/plain' });
+			res.end(JSON.stringify( shipDocs ));
+		}
+	});
 }
 	
 
