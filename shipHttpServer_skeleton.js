@@ -13,8 +13,6 @@ function query1(db, res ){
 			res.end(ship.Name);
 		}
 	});
-	
-
 }
 	
 
@@ -27,7 +25,6 @@ function query2(db, res ){
 			res.end(count.toString());
 		}
 	});
-
 }
 
 function query3(db, res){
@@ -42,16 +39,32 @@ function query3(db, res){
 	});
 }
 	
-
 function query4(db, res){
 
 	/* Find distinct countries with owners of ships sailing under Japanese flag and tonnage >= 150,000, as a JSON array of strings. */
-
-	res.writeHead(200, {'content-type': 'text/plain'});
-	res.end('[]');
+	db.collection('vessels').aggregate([
+		{$match: {Tonnage: {$gte: 150000}, Flag: "Japan", Owner: {$ne: null}}},
+		{$lookup: {
+			from: 'clients',
+			localField: 'Owner',
+			foreignField: 'code',
+			as: 'embeddedOwner'
+		}},
+		{$project: {_id: 0, 'embeddedOwner.country': 1}},
+		{$group: {_id: "$embeddedOwner.country"}}
+	]).toArray( function(err, docs){
+		if (err) console.log(err);
+		else {
+			var countries = [];
+			docs.forEach(function(doc){
+				countries.push( doc._id[0])
+			});
+			res.writeHead(200, { 'content-type': 'text/plain' });
+			res.end( JSON.stringify( countries ));
+		}
+	});
 
 }
-
 
 function query5(db, res){
 
@@ -61,8 +74,6 @@ function query5(db, res){
 	res.end('[]');
 }
 	
-
-
 
 http.createServer( function (req, res){
 
