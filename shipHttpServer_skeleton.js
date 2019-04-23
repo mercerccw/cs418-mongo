@@ -69,11 +69,34 @@ function query4(db, res){
 function query5(db, res){
 
 	/* Return the codes of those owners with total fleet tonnage >= 5,000,000, as a JSON array of codes. */
+	db.collection("vessels").aggregate(
+		[
+			{ $match: { Owner: { $ne: null } } },
+			{
+				$group:
+				{
+					_id: "$Owner",
+					totalTonnage: { $sum: "$Tonnage" }
+				}
+			},
+			{ $match: { totalTonnage: { $gte: 5000000 } } }
+		]
+	).toArray(function (err, doc) {
+		if (err) console.log(err);
+		else {
+			var code = [];
+			doc.forEach(
+				function (doc) {
+					code.push(doc._id);
+				}
+			);
 
-	res.writeHead(200, {'content-type': 'text/plain'});
-	res.end('[]');
+			res.writeHead(200, { 'content-type': 'text/plain' });
+			res.end(JSON.stringify(code));
+		}
+	});
 }
-	
+
 
 http.createServer( function (req, res){
 
